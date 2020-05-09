@@ -1,11 +1,26 @@
-extern crate diesel;
-extern crate project_purse;
+pub mod database;
+pub mod schema;
 
-use self::diesel::prelude;
-use self::models::*;
-use self::project_purse::*;
+#[macro_use]
+extern crate diesel;
+extern crate dotenv;
+
+use self::diesel::prelude::*;
+use database::connect_database::connect_database;
+use database::models::*;
 
 fn main() {
-    let a = "Poop";
-    println!("{:}", a);
+    use schema::account_holder::dsl::*;
+    let connection = connect_database();
+    let results = account_holder
+        .filter(id.eq(1))
+        .limit(1)
+        .load::<AccountHolder>(&connection)
+        .expect("Err");
+
+    println!("Showing users {}", results.len());
+
+    for usr in results {
+        println!("name {}", usr.first_name)
+    }
 }
